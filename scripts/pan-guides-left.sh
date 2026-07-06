@@ -1,5 +1,5 @@
 #!/bin/bash
-SRC="/home/gaspar/musica/canciones-secuencias/guias-clicks/Click_and_Guide_Samples/Click and Guide Samples/Spanish Guides/Song Sections"
+SRC="/home/gaspar/Música/Spanish Guides/Song Sections"
 OUT="$SRC/panned"
 
 mkdir -p "$OUT"
