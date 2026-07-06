@@ -1,0 +1,17 @@
+services:
+  web-panel:
+    build: ./web-panel
+    ports:
+      - "5000:5000"
+    user: "1000:1000"
+    volumes:
+      - ./web-panel/setlist.json:/app/setlist.json:ro
+      - "/home/gaspar/musica/canciones-secuencias/guias-clicks/Click_and_Guide_Samples/Click and Guide Samples/Spanish Guides/Song Sections/panned:/app/guides:ro"
+      - /run/user/1000/pulse/native:/run/user/1000/pulse/native
+    environment:
+      - REAPER_HOST=host.docker.internal
+      - REAPER_PORT=9000
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>IglesiaLive</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { background: #0f0f0f; color: #ddd; font-family: system-ui, -apple-system, sans-serif; padding-bottom: 52px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #1e1e1e; }
+    header span { font-size: .8rem; font-weight: 700; letter-spacing: .14em; color: #4a90d9; }
+    #transport { display: flex; gap: 7px; }
+    #transport button {
+      background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
+      border-radius: 7px; padding: 8px 14px; font-size: 1rem; cursor: pointer; line-height: 1;
+    }
+    #transport button:active { background: #252525; }
+    #transport .t-play  { color: #4a90d9; border-color: #1e3a5f; }
+    #transport .t-clear { color: #888; }
+
+    .song { border-bottom: 1px solid #181818; }
+
+    .song-header {
+      display: flex; align-items: center; gap: 13px;
+      padding: 17px 16px; cursor: pointer; user-select: none;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #2e2e2e; flex-shrink: 0; }
+    .song.active .dot { background: #4a90d9; }
+    .song-title { font-size: 1rem; line-height: 1.2; }
+    .song.active .song-title { color: #4a90d9; font-weight: 600; }
+
+    .sections { display: none; padding: 2px 14px 14px; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .song.active .sections { display: grid; }
+
+    .sec {
+      padding: 16px 6px; border: 1px solid #232323; border-radius: 9px;
+      background: #161616; color: #bbb; font-size: .9rem;
+      text-align: center; cursor: pointer; user-select: none;
+    }
+    .sec:active { background: #1c1c1c; }
+    .sec.on { background: #132a46; border-color: #4a90d9; color: #7ab8f5; font-weight: 600; }
+
+    #bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 11px 16px; background: #111; border-top: 1px solid #1e1e1e;
+      font-size: .8rem; color: #555;
+    }
+    #bar.ok  { color: #4a90d9; }
+    #bar.err { color: #c0392b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <span>IGLESIA LIVE</span>
+  <div id="transport">
+    <button class="t-play"  onclick="transport('play')">▶</button>
+    <button                 onclick="transport('pause')">⏸</button>
+    <button class="t-clear" onclick="clearQueue()">✕</button>
+  </div>
+</header>
+<div id="root"></div>
+<div id="bar">—</div>
+
+<script>
+let songs = [];
+let activeSong = 0;
+
+fetch('/setlist').then(r => r.json()).then(data => {
+  songs = data;
+  render();
+}).catch(() => setBar('Sin conexión con el servidor', true));
+
+function render() {
+  document.getElementById('root').innerHTML = songs.map((song, si) => `
+    <div class="song ${si === activeSong ? 'active' : ''}" id="s${si}">
+      <div class="song-header" onclick="setSong(${si})">
+        <div class="dot"></div>
+        <span class="song-title">${esc(song.title)}</span>
+      </div>
+      <div class="sections">
+        ${song.sections.map((sec, i) => `
+          <div class="sec" data-si="${si}" data-i="${i}"
+               onclick="jump(${sec.marker}, ${si}, ${i}, '${esc(sec.name)}', '${esc(sec.guide || '')}')">${esc(sec.name)}</div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setSong(si) {
+  if (activeSong === si) return;
+  document.querySelectorAll('.sec.on').forEach(el => el.classList.remove('on'));
+  document.getElementById('s' + activeSong).classList.remove('active');
+  document.getElementById('s' + si).classList.add('active');
+  activeSong = si;
+}
+
+function jump(marker, si, secIdx, name, guide) {
+  setSong(si);
+  document.querySelectorAll('.sec.on').forEach(el => el.classList.remove('on'));
+  document.querySelector(`[data-si="${si}"][data-i="${secIdx}"]`).classList.add('on');
+  setBar(`→ ${name}`, false);
+
+  if (guide) fetch(`/guide/${encodeURIComponent(guide)}`, { method: 'POST' });
+  fetch(`/osc/marker/${marker}`, { method: 'POST' })
+    .then(r => { if (!r.ok) setBar('Error OSC: marcador fuera de rango', true); })
+    .catch(() => setBar('Sin conexión con Reaper', true));
+}
+
+function setBar(msg, isErr) {
+  const bar = document.getElementById('bar');
+  bar.textContent = msg;
+  bar.className = isErr ? 'err' : 'ok';
+}
+
+function transport(cmd) {
+  fetch(`/osc/transport/${cmd}`, { method: 'POST' })
+    .then(r => { if (!r.ok) setBar(`Error OSC: ${cmd}`, true); else setBar(cmd, false); })
+    .catch(() => setBar('Sin conexión con Reaper', true));
+}
+
+function clearQueue() {
+  document.querySelectorAll('.sec.on').forEach(el => el.classList.remove('on'));
+  transport('stop');
+  setBar('Cola limpiada', false);
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>

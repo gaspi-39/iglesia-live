@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Mi gozo",
+    "sections": [
+      {
+        "name": "Inicio",
+        "marker": 1,
+        "guide": "Spanish - Baja Intensidad (Breakdown).wav"
+      },
+      { "name": "Intro", "marker": 2, "guide": "Spanish - Intro.wav" },
+      {
+        "name": "Estrofa",
+        "marker": 3,
+        "guide": "Spanish - Verso (Verse).wav"
+      },
+      {
+        "name": "Pre-coro",
+        "marker": 4,
+        "guid e": "Spanish - Pre Coro (Pre Chorus).wav"
+      },
+      { "name": "Coro", "marker": 5, "guide": "Spanish - Coro (Chorus).wav" },
+      {
+        "name": "Puente",
+        "marker": 6,
+        "guide": "Spanish - Puente (Bridge).wav"
+      },
+      {
+        "name": "Estrofa-2",
+        "marker": 7,
+        "guide": "Spanish - Verso 2 (Verse 2).wav"
+      },
+      {
+        "name": "Interludio",
+        "marker": 8,
+        "guide": "Spanish - Interludio (Interlude).wav"
+      },
+      { "name": "Final", "marker": 9, "guide": "Spanish - Ending (Final).wav" }
+    ]
+  },
+  {
+    "title": "Jubilo",
+    "sections": [
+      {
+        "name": "Inicio",
+        "marker": 10,
+        "guide": "Spanish - Baja Intensidad (Breakdown).wav"
+      },
+      { "name": "Intro", "marker": 11, "guide": "Spanish - Intro.wav" },
+      {
+        "name": "Estrofa",
+        "marker": 12,
+        "guide": "Spanish - Verso (Verse).wav"
+      },
+      {
+        "name": "Coro-abajo",
+        "marker": 13,
+        "guide": "Spanish - Coro (Chorus).wav"
+      },
+      {
+        "name": "Coro-arriba",
+        "marker": 14,
+        "guide": "Spanish - Coro (Chorus).wav"
+      },
+      {
+        "name": "Interludio",
+        "marker": 15,
+        "guide": "Spanish - Interludio (Interlude).wav"
+      },
+      {
+        "name": "Estrofa-2-abajo",
+        "marker": 16,
+        "guide": "Spanish - Verso 2 (Verse 2).wav"
+      },
+      {
+        "name": "Estrofa-2-arriba",
+        "marker": 17,
+        "guide": "Spanish - Verso 2 (Verse 2).wav"
+      },
+      { "name": "Final", "marker": 18, "guide": "Spanish - Ending (Final).wav" }
+    ]
+  }
+]
